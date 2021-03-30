@@ -7,7 +7,6 @@ var extraWhiteSpaces = RegExp(r'\s\s+');
 var hyperLinkProtocol = RegExp(r'https://');
 var copyrightRegex = RegExp(r'^copyright (\(c\))?([0-9]{4})(\(c\))?');
 
-
 String normalizeText(Uint8List bytes) {
   var unknownText = utf8.decode(bytes);
   unknownText = unknownText.trim();
@@ -99,17 +98,17 @@ HashMap<int, int> generateHashMap(List<String> tokens) {
   while (i < tokens.length - 2) {
     var str = tokens[i] + ' ' + tokens[i + 1] + ' ' + tokens[i + 2];
     var d = crc.convert(utf8.encode(str));
-    tokensHash.update(d.hashCode, (value) => value++,ifAbsent: ()=> 0);
+    tokensHash.update(d.hashCode, (value) => ++value, ifAbsent: () => 1);
     i++;
   }
   return tokensHash;
 }
 
-double confidenceLevel(HashMap<int,int> unknown,HashMap<int,int> license){
+double confidenceLevel(HashMap<int, int> unknown, HashMap<int, int> license) {
   var matchCount = 0;
-  unknown.forEach((key, value) { 
-    if(license.containsKey(key) && value>=license[key]) matchCount++;
+  unknown.forEach((key, value) {
+    if (license.containsKey(key) && value >= license[key]) matchCount++;
   });
 
-  return matchCount/license.length.toDouble();
+  return matchCount / license.length.toDouble();
 }
